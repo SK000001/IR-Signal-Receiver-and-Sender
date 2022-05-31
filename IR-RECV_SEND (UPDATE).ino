@@ -55,12 +55,15 @@ void loop() {
     if (flg == 1) {
       Serial.println("SETUP ON!");
       IrReceiver.start();
-      flg = 0;
+      flg = 2;
     }
     
     /* for on button */
     if (on_flg == 0) {
-      Serial.println("TAKING IN ON DATA..");
+      if (flg == 2) {
+        Serial.println("TAKING IN ON DATA..");
+        flg = 3;
+      }
       while (digitalRead(IN_BUTTON) == HIGH) {
         if (IrReceiver.available()) {
           storeCode(IrReceiver.read(), 0);
@@ -72,7 +75,10 @@ void loop() {
 
     /* for off button */
     if (on_flg == 1 && off_flg == 0) {
-      Serial.println("TAKING IN OFF DATA..");
+      if (flg == 3) {
+        Serial.println("TAKING IN OFF DATA..");
+        flg = 4;
+      }
       while (digitalRead(IN_BUTTON) == HIGH) {
         if (IrReceiver.available()) {
           storeCode(IrReceiver.read(), 1);
@@ -87,9 +93,9 @@ void loop() {
     }
   } else {
     /* run on and off */
-    if (flg == 0) {
+    if (flg == 4) {
       IrReceiver.stop();
-      flg = 1;
+      flg = 0;
     }
 
     if (digitalRead(ON_BUTTON) == HIGH) {
